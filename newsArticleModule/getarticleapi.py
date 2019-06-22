@@ -1,11 +1,11 @@
 from newsapi import NewsApiClient
 from .mymodel import ArticleApiResponse
-from config.config import config
+import config
 import urllib
 from bs4 import BeautifulSoup
 
 # APIKEY
-API_KEY = config["NEWS_API_KEY"]
+API_KEY = config.config["NEWS_API_KEY"]
 
 
 def get_data_from_news_api(from_date, to_date, query):
