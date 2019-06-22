@@ -1,10 +1,11 @@
 from newsapi import NewsApiClient
-from mymodel import ArticleApiResponse
+from .mymodel import ArticleApiResponse
+from config.config import config
 import urllib
 from bs4 import BeautifulSoup
 
 # APIKEY
-API_KEY = '72e7bba0059148e29591164a6be2b18b'
+API_KEY = config["NEWS_API_KEY"]
 
 
 def get_data_from_news_api(from_date, to_date, query):
@@ -17,6 +18,7 @@ def get_data_from_news_api(from_date, to_date, query):
                                        to=to_date,
                                        language='en',
                                        sort_by='relevancy',
+                                       page_size=1,
                                        page=1)
 
     article_api_response = map(lambda j: ArticleApiResponse(j), response['articles'])
@@ -44,12 +46,6 @@ def parse_article(article):
     # break multi-headlines into a line each
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     # drop blank lines
-    return '\n'.join(chunk for chunk in chunks if chunk)
+    return ' '.join(chunk for chunk in chunks if chunk)
 
 
-def test():
-    text = get_data_from_news_api('2019-05-17', '2019-06-17', 'it')
-    print(text)
-
-
-test()

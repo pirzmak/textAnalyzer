@@ -1,9 +1,9 @@
 import pymongo
-from model import Record
+from .model import Record
+from config.config import config
 
-
-myclient = pymongo.MongoClient("mongodb://localhost:27017/")
-mydb = myclient["textAnalize"]
+myclient = pymongo.MongoClient(config["DB_host"])
+mydb = myclient[config["DB_name"]]
 
 
 def insert(name: str, record: Record):

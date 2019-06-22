@@ -7,8 +7,7 @@ class Record:
         self.actual_price = price['before']
         self.after_price = price['after']
 
-
-    def toRecord(self):
+    def to_record(self):
         return {
             "title": self.title,
             "text_vector": self.text_vector,
