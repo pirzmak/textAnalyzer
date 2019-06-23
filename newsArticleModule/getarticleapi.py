@@ -1,5 +1,5 @@
 from newsapi import NewsApiClient
-from .mymodel import ArticleApiResponse
+from .model import ArticleApiResponse
 import config
 import urllib
 from bs4 import BeautifulSoup
