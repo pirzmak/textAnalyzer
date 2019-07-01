@@ -8,9 +8,14 @@ mydb = myclient[config["DB_name"]]
 
 def insert(name: str, record: Record):
     mycol = mydb[name]
-    mycol.insert_one(record.toRecord())
+    mycol.insert_one(record.to_record())
 
 
 def insert_many(name: str, records: [Record]):
     mycol = mydb[name]
-    mycol.insert_one(list(map(lambda r: r.toRecord(), records)))
+    if records:
+        mycol.insert_many(list(map(lambda r: r.to_record(), records)))
+
+
+def how_many_records(name: str):
+    print(mydb[name].count())

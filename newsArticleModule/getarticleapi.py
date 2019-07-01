@@ -8,22 +8,25 @@ from bs4 import BeautifulSoup
 API_KEY = config.config["NEWS_API_KEY"]
 
 
-def get_data_from_news_api(from_date, to_date, query):
+def get_data_from_news_api(from_date, to_date, query, page_size, page):
     news_api = NewsApiClient(api_key=API_KEY)
 
     response = news_api.get_everything(q=query,
-                                       sources='bbc-news,the-verge',
+                                       sources='bbc-news',
                                        domains='bbc.co.uk,techcrunch.com',
                                        from_param=from_date,
                                        to=to_date,
                                        language='en',
                                        sort_by='relevancy',
-                                       page_size=1,
-                                       page=1)
+                                       page_size=page_size,
+                                       page=page)
 
-    article_api_response = map(lambda j: ArticleApiResponse(j), response['articles'])
-    full_content = map(lambda j: get_full_articles_content(j), article_api_response)
-    return list(full_content)
+    article_api_response = []
+    for a in response['articles']:
+        article = ArticleApiResponse(a)
+        article.content = get_full_articles_content(article)
+        article_api_response.append(article)
+    return article_api_response
 
 
 def get_full_articles_content(article):

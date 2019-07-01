@@ -4,7 +4,7 @@ class Record:
         self.text_vector = content
         self.date = date
         self.before_price = price['before']
-        self.actual_price = price['before']
+        self.actual_price = price['actual']
         self.after_price = price['after']
 
     def to_record(self):

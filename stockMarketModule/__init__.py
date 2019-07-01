@@ -1,1 +1,2 @@
-from .getstockmarketapi import get_stock_prices_day
+from .getstockmarketapi import get_stock_after_before_actual_price
+from .getstockmarketapi import get_stock_prices
