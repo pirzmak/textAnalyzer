@@ -1,91 +1,100 @@
-from datetime import datetime
-from datetime import timedelta
 from iexfinance.stocks import get_historical_intraday
 from dateutil import parser
 import math
 import config
+from .mysessiondate import *
 
-myCash = {}
+myCache = {}
+CACHE_SIZE = config.config['cache_size']
 
 
 def get_stock_prices(name: str, date: datetime):
-    if date.hour < 9 or (date.hour == 9 and date.minute < 30):
-        date = datetime(date.year, date.month, date.day, 9, 30, 0)
-    if date.hour > 15 or (date.hour == 15 and date.minute > 30):
-        date += timedelta(days=1)
-        date = datetime(date.year, date.month, date.day, 9, 30, 0)
+    date = to_first_day_session_if_needed(date)
+    date = to_next_day_session_if_needed(date)
+
     key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute, 0))
-    if key in myCash:
-        return myCash[key]
+
+    if len(myCache) == CACHE_SIZE:
+        myCache.clear()
+
+    if key in myCache:
+        return myCache[key]
     else:
-        date_list = list()
-        tmp_date = date
-        while not date_list:
-            response = get_historical_intraday(name, tmp_date, output_format='pandas', token=config.config["IEX_API_KEY"])
-            date_list = list(map(lambda x: (parser.parse(x[3] + " " + x[5]), x[0]), response.values))
-            tmp_date = tmp_date + timedelta(days=1)
-            tmp_date = datetime(tmp_date.year, tmp_date.month, tmp_date.day, 9, 30, 0)
+        date_list = get_day_market_prices(name, date)
 
         for i in date_list:
             i_key = name + str(i[0])
-            if i_key not in myCash:
-                myCash[i_key] = i[1]
+            if i_key not in myCache:
+                myCache[i_key] = i[1]
             if date.day != i[0].day:
                 key = name + str(datetime(date.year, date.month, date.day, i[0].hour, i[0].minute, 0))
-                myCash[key] = date_list[0][1]
-        return myCash[key]
+                myCache[key] = date_list[0][1]
+
+        if key not in myCache:
+            myCache[key] = math.nan
+        if math.isnan(myCache[key]):
+            return try_to_get_nearly_price(name, date)
+
+        return myCache[key]
+
+
+def try_to_get_nearly_price(name: str, date: datetime):
+    for i in range(1, 5):
+        key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute + i, 0))
+        if key in myCache:
+            return myCache[key]
+        key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute - i, 0))
+        if key in myCache:
+            return myCache[key]
+    return 'nan'
+
+
+def get_day_market_prices(name: str, date: datetime):
+    date_list = list()
+    tmp_date = date
+
+    while not date_list:
+        response = get_historical_intraday(name, tmp_date, output_format='pandas', token=config.config["IEX_API_KEY"])
+        date_list = list(map(lambda x: (parser.parse(x[3] + " " + x[5]), x[0]), response.values))
+        tmp_date = next_day(tmp_date)
+
+    return date_list
 
 
 def get_stock_after_before_actual_price(name: str, date: datetime, delta=40):
     before = date - timedelta(minutes=delta)
 
-    if date.hour > 15:
-        date += timedelta(days=1)
-        date = datetime(date.year, date.month, date.day, 9, 30, 0)
+    date = to_next_day_session_if_needed(date)
 
     after = date + timedelta(minutes=delta)
 
-    if before.hour < 9 or (before.hour == 9 and before.minute < 30):
-        before -= timedelta(days=1)
-        before = datetime(before.year, before.month, before.day, 15, 0, 0)
-    if before.hour > 15:
-        before = datetime(before.year, before.month, before.day, 15, 0, 0)
+    before = to_previous_day_session_if_needed(before)
 
-    if after.hour < 9 or (after.hour == 9 and after.minute < 30):
-        after = datetime(after.year, after.month, after.day, 9, 30, 0)
+    before = to_last_day_session_if_needed(before)
+
+    after = to_first_day_session_if_needed(after)
 
     before_price = get_stock_prices(name, before)
     actual_price = get_stock_prices(name, date)
     after_price = get_stock_prices(name, after)
 
-    if math.isnan(before_price):
-        if math.isnan(actual_price):
-            if math.isnan(after_price):
-                before_price = after_price
-            else:
-                before_price = 0
-        else:
-            before_price = actual_price
-
-    if math.isnan(actual_price):
-        if math.isnan(before_price):
-            if math.isnan(after_price):
-                actual_price = after_price
-            else:
-                actual_price = 0
-        else:
-            actual_price = before_price
-
-    if math.isnan(after_price):
-        if math.isnan(actual_price):
-            if math.isnan(before_price):
-                after_price = before_price
-            else:
-                after_price = 0
-        else:
-            after_price = actual_price
+    before_price = find_no_nan(before_price, actual_price, after_price)
+    actual_price = find_no_nan(actual_price, before_price, after_price)
+    after_price = find_no_nan(after_price, actual_price, before_price)
 
     return {"before": before_price,
             "actual": actual_price,
             "after": after_price}
 
+
+def find_no_nan(p1, p2, p3):
+    if math.isnan(p1):
+        if math.isnan(p2):
+            if math.isnan(p3):
+                return p3
+            else:
+                return 0
+        else:
+            return p2
+    else:
+        return p1

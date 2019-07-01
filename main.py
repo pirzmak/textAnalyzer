@@ -11,9 +11,9 @@ from config import dictionares
 import config
 
 
-BAGS_OF_WORDS = config.config['DB_collections_names']['bags_of_words']
-NAMES_ENTITIES = config.config['DB_collections_names']['names_entities']
-NOUNS = config.config['DB_collections_names']['nouns']
+BAGS_OF_WORDS = config.config['DB_collections_name_bags_of_words']
+NAMES_ENTITIES = config.config['DB_collections_name_names_entities']
+NOUNS = config.config['DB_collections_name_nouns']
 
 
 def get_article_data(from_date, to_date, sign, query):
@@ -36,12 +36,14 @@ def get_article_data(from_date, to_date, sign, query):
 def get_all_articles_from_dict(from_date, to_date, dict):
     for word in dict:
         bags_of_word, names_entities, nouns = get_article_data(from_date, to_date, dict[0], word)
-        insert_many(BAGS_OF_WORDS, bags_of_word)
-        insert_many(NAMES_ENTITIES, names_entities)
-        insert_many(NOUNS, nouns)
+        # insert_many(BAGS_OF_WORDS, bags_of_word)
+        # insert_many(NAMES_ENTITIES, names_entities)
+        # insert_many(NOUNS, nouns)
+        print(bags_of_word)
+
+
+
 
 
 dictionares.amazon_dict.extend(dictionares.technology_dict)
-get_all_articles_from_dict('2019-05-28', '2019-05-28', dictionares.amazon_dict)
-
-print(how_many_records(BAGS_OF_WORDS))
+get_all_articles_from_dict('2019-06-03', '2019-06-03', dictionares.amazon_dict)
