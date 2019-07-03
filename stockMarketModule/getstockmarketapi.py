@@ -40,10 +40,12 @@ def get_stock_prices(name: str, date: datetime):
 
 def try_to_get_nearly_price(name: str, date: datetime):
     for i in range(1, 5):
-        key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute + i, 0))
+        date = datetime(date.year, date.month, date.day, date.hour, date.minute, 0) + timedelta(minutes=i)
+        key = name+str(date)
         if key in myCache:
             return myCache[key]
-        key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute - i, 0))
+        date = datetime(date.year, date.month, date.day, date.hour, date.minute, 0) - timedelta(minutes=i)
+        key = name+str(date)
         if key in myCache:
             return myCache[key]
     return 'nan'
@@ -57,6 +59,7 @@ def get_day_market_prices(name: str, date: datetime):
         response = get_historical_intraday(name, tmp_date, output_format='pandas', token=config.config["IEX_API_KEY"])
         date_list = list(map(lambda x: (parser.parse(x[3] + " " + x[5]), x[0]), response.values))
         tmp_date = next_day(tmp_date)
+        print(tmp_date)
 
     return date_list
 

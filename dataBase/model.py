@@ -1,5 +1,6 @@
 class Record:
-    def __init__(self, title, content, date, price):
+    def __init__(self, tag, title, content, date, price):
+        self.tag = tag
         self.title = title
         self.text_vector = content
         self.date = date
@@ -9,6 +10,7 @@ class Record:
 
     def to_record(self):
         return {
+            "tag": self.tag,
             "title": self.title,
             "text_vector": self.text_vector,
             "date": self.date,

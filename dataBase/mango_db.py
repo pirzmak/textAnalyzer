@@ -19,3 +19,9 @@ def insert_many(name: str, records: [Record]):
 
 def how_many_records(name: str):
     print(mydb[name].count())
+
+
+def clear(name: str):
+    mycol = mydb[name]
+    mycol.remove()
+

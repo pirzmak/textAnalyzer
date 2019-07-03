@@ -23,9 +23,12 @@ def get_data_from_news_api(from_date, to_date, query, page_size, page):
 
     article_api_response = []
     for a in response['articles']:
-        article = ArticleApiResponse(a)
-        article.content = get_full_articles_content(article)
-        article_api_response.append(article)
+        try:
+            article = ArticleApiResponse(a)
+            article.content = get_full_articles_content(article)
+            article_api_response.append(article)
+        except urllib.error.HTTPError:
+            print("Can't get article")
     return article_api_response
 
 
