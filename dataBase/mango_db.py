@@ -17,6 +17,26 @@ def insert_many(name: str, records: [Record]):
         mycol.insert_many(list(map(lambda r: r.to_record(), records)))
 
 
+def select_all(column: str):
+    mycol = mydb[column]
+    return mycol.find()
+
+
+def select_by_tag(column: str, tag: str):
+    mycol = mydb[column]
+    return mycol.find({'tag': tag})
+
+
+def select(column: str, query):
+    mycol = mydb[column]
+    return mycol.find(query)
+
+
+def update(column: str, query, value):
+    mycol = mydb[column]
+    return mycol.update_one(query, value)
+
+
 def how_many_records(name: str):
     print(mydb[name].count())
 

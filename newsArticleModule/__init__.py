@@ -1,5 +1,2 @@
-from .getarticleapi import get_data_from_news_api
-from .textanalizer import get_count_bags_of_word
-from .textanalizer import get_count_named_entity
-from .textanalizer import get_count_nouns_phrases
+from .main import get_all_articles_from_dict
 from .model import ArticleApiResponse

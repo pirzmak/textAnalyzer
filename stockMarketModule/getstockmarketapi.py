@@ -59,7 +59,6 @@ def get_day_market_prices(name: str, date: datetime):
         response = get_historical_intraday(name, tmp_date, output_format='pandas', token=config.config["IEX_API_KEY"])
         date_list = list(map(lambda x: (parser.parse(x[3] + " " + x[5]), x[0]), response.values))
         tmp_date = next_day(tmp_date)
-        print(tmp_date)
 
     return date_list
 
