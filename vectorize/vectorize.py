@@ -2,7 +2,7 @@ def vectorize(data, all):
     vector = [0] * len(all)
     for k, v in data.items():
         if k in all:
-            vector[all[k]] = v
+            vector[all[k]] = v / 1.0
     return vector
 
 
