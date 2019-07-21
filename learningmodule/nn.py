@@ -1,7 +1,8 @@
 from vectorize import vectorize
 from vectorize import get_all_words
 from pricetrend import get_price_trend
-from dataBase.mango_db import select_all
+from stockMarketModule import get_price
+from dataBase.mango_db import select_all, select
 import math
 import numpy as np
 import tensorflow as tf
@@ -13,16 +14,14 @@ NAMES_ENTITIES = config.config['DB_collections_name_names_entities']
 NOUNS = config.config['DB_collections_name_nouns']
 
 
-def preprocesssing_data(all):
+def preprocesssing_data(type, sign, tags, all):
     inputs, outputs = [], []
 
-    for x in select_all(BAGS_OF_WORDS):
-        if "" != x['before_price'] and "" != x['actual_price'] and "" != x['after_price']:
-            if not math.isnan(x['before_price']) and not math.isnan(x['actual_price']) and not math.isnan(
-                    x['after_price']) \
-                    and x['before_price'] > 0 and x['actual_price'] > 0 and x['after_price'] > 0:
-                inputs.append(vectorize(x['text_vector'], all))
-                outputs.append(get_price_trend(x['before_price'], x['actual_price'], x['after_price']))
+    for x in select(type, {'$or': tags}):
+        prices = get_price(sign, x['date'])
+        if not math.isnan(prices['actual']):
+            inputs.append(vectorize(x['text_vector'], all))
+            outputs.append(get_price_trend(prices['before'], prices['actual'], prices['after']))
 
     li = list(zip(inputs, outputs))
 
@@ -37,16 +36,16 @@ def preprocesssing_data(all):
     return inputs, outputs
 
 
-def learn(divide=0.8):
-    all = get_all_words(select_all(BAGS_OF_WORDS))
-    inputs, outputs = preprocesssing_data(all)
+def learn(type, sign, tags, divide=0.8):
+    all = get_all_words(select(type, {'$or': tags}))
+    inputs, outputs = preprocesssing_data(type, sign, tags, all)
 
-    to = len(inputs) * divide
+    to = int(len(inputs) * divide)
     x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
     y_train, y_test = outputs[0:to], outputs[to: len(outputs)]
 
     model = tf.keras.models.Sequential([
-      tf.keras.layers.Flatten(input_shape=(21843, )),
+      tf.keras.layers.Flatten(input_shape=(len(all), )),
       tf.keras.layers.Dense(128, activation='relu'),
       tf.keras.layers.Dropout(0.2),
       tf.keras.layers.Dense(5, activation='softmax')

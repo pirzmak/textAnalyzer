@@ -19,6 +19,18 @@ amazon_dict = ["AMZN", "Amazon", "Amazon.com", "e-commerce", "Jeff Bezos", "Alex
 adobe_dict = ["ADBE", "Adobe", "Adobe systems", "PostScript", "Photoshop", "cloud", "adobe acrobat", "Shantanu Narayen",
               "John Warnock", "Charles Geschke", "Fotolia", "Marketo", "Mixamo", "Scene7", "DTP", "adobe creative cloud",
               "adobe experience cloud"]
+goldman_dict = ["GS	", "Goldman Sachs Group", "goldman", "bank", "David M. Solomon", "United Capital", "Goldman Sachs Asset Management",
+                "gold", "speculation", "banking", "investing", "lending", "consumer & investment management", "financial services",
+                "commercial banking", "Lloyd Blankfein", "commodities", "Mutual funds", "John E. Waldron"]
+morgan_dict = ["JPM", "J.P. Morgan", "J.P. Morgan Chase & Co.", "bank", "Bank of the Manhattan Company", "Jamie Dimon", "Morgan",
+                "JPMorgan", "Bank One", "banking", "investing", "Bear Stearns", "Washington Mutual", "JPM Coin",
+                "Chase Field", "Jennifer Piepszak", "commodities", "wealth management", "Big Four banks"]
 
 AMAZON_NAME = 'AMZN'
 ADOBE_NAME = 'ADBE'
+GOLDMAN_NAME = 'GS'
+MORGAN_NAME = 'JPM'
+ANDARKO_NAME = 'APC'
+EOG_NAME = 'EOG'
+MMM_NAME = 'MMM'
+BOEING_NAME = 'BA'

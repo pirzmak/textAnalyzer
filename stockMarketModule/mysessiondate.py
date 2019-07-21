@@ -27,20 +27,20 @@ def to_previous_day_session_if_needed(date: datetime):
 
 
 def first_day_session(date: datetime):
-    return datetime(date.year, date.month, date.day, 9, 30, 0)
+    return datetime(date.year, date.month, date.day, 9, 31, 0)
 
 
 def last_day_session(date: datetime):
-    return datetime(date.year, date.month, date.day, 15, 0, 0)
+    return datetime(date.year, date.month, date.day, 14, 59, 0)
 
 
 def next_day(date: datetime):
     date += timedelta(days=1)
-    date = datetime(date.year, date.month, date.day, 9, 30, 0)
+    date = datetime(date.year, date.month, date.day, 9, 31, 0)
     return date
 
 
 def previous_day(date: datetime):
     date -= timedelta(days=1)
-    date = datetime(date.year, date.month, date.day, 15, 0, 0)
+    date = datetime(date.year, date.month, date.day, 14, 59, 0)
     return date

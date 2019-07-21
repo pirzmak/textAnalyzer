@@ -1,5 +1,6 @@
 from iexfinance.stocks import get_historical_intraday
 from dateutil import parser
+import pandas as pd
 import math
 import config
 from .mysessiondate import *
@@ -11,8 +12,9 @@ CACHE_SIZE = config.config['cache_size']
 def get_stock_prices(name: str, date: datetime):
     date = to_first_day_session_if_needed(date)
     date = to_next_day_session_if_needed(date)
+    monday = date - timedelta(days=date.weekday())
 
-    key = name+str(datetime(date.year, date.month, date.day, date.hour, date.minute, 0))
+    key = str(datetime(date.year, date.month, date.day, date.hour, date.minute, 0))
 
     if len(myCache) == CACHE_SIZE:
         myCache.clear()
@@ -20,40 +22,28 @@ def get_stock_prices(name: str, date: datetime):
     if key in myCache:
         return myCache[key]
     else:
-        date_list = get_day_market_prices(name, date)
-
-        for i in date_list:
-            i_key = name + str(i[0])
-            if i_key not in myCache:
-                myCache[i_key] = i[1]
-            if date.day != i[0].day:
-                key = name + str(datetime(date.year, date.month, date.day, i[0].hour, i[0].minute, 0))
-                myCache[key] = date_list[0][1]
-
-        if key not in myCache:
-            myCache[key] = math.nan
-        if math.isnan(myCache[key]):
-            return try_to_get_nearly_price(name, date)
-
-        return myCache[key]
-
-
-def try_to_get_nearly_price(name: str, date: datetime):
-    for i in range(1, 5):
-        date = datetime(date.year, date.month, date.day, date.hour, date.minute, 0) + timedelta(minutes=i)
-        key = name+str(date)
-        if key in myCache:
+        try:
+            prices = get_market_prices(name, str(monday.date()))
+            for i in prices:
+                myCache[i[0]] = i[1]
             return myCache[key]
-        date = datetime(date.year, date.month, date.day, date.hour, date.minute, 0) - timedelta(minutes=i)
-        key = name+str(date)
-        if key in myCache:
-            return myCache[key]
-    return 'nan'
+        except:
+            return float('nan')
+
+
+def get_market_prices(name: str, date: str):
+    data = pd.read_csv('resources/' + name + "/" + date + ".csv")
+
+    to_ret = list()
+    for index, row in data.iterrows():
+        to_ret.append((row[0], row[1]))
+
+    return to_ret
 
 
 def get_day_market_prices(name: str, date: datetime):
     date_list = list()
-    tmp_date = date
+    tmp_date = datetime(date.year, date.month, date.day)
 
     while not date_list:
         response = get_historical_intraday(name, tmp_date, output_format='pandas', token=config.config["IEX_API_KEY"])
