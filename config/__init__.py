@@ -1,3 +1,2 @@
-from .config import config
+from .config import config, resources_path, TRENDS, DBNAMES
 from .dictionares import *
-from .config import TRENDS

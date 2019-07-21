@@ -15,3 +15,13 @@ class TRENDS:
     NO_CHANGE = 2
     INCREASE = 3
     BIG_INCREASE = 4
+
+
+class DBNAMES:
+    BAGS_OF_WORDS = config.config['DB_collections_name_bags_of_words']
+    NAMES_ENTITIES = config.config['DB_collections_name_names_entities']
+    NOUNS = config.config['DB_collections_name_nouns']
+
+
+def resources_path(path):
+    return config['resources_path'] + path

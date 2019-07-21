@@ -2,16 +2,11 @@ from vectorize import vectorize
 from vectorize import get_all_words
 from pricetrend import get_price_trend
 from stockMarketModule import get_price
-from dataBase.mango_db import select_all, select
+from dataBase.mango_db import select
 import math
 import numpy as np
 import tensorflow as tf
-import config
 from random import shuffle
-
-BAGS_OF_WORDS = config.config['DB_collections_name_bags_of_words']
-NAMES_ENTITIES = config.config['DB_collections_name_names_entities']
-NOUNS = config.config['DB_collections_name_nouns']
 
 
 def preprocesssing_data(type, sign, tags, all):
