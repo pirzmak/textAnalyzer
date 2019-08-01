@@ -18,9 +18,9 @@ class TRENDS:
 
 
 class DBNAMES:
-    BAGS_OF_WORDS = config.config['DB_collections_name_bags_of_words']
-    NAMES_ENTITIES = config.config['DB_collections_name_names_entities']
-    NOUNS = config.config['DB_collections_name_nouns']
+    BAGS_OF_WORDS = config['DB_collections_name_bags_of_words']
+    NAMES_ENTITIES = config['DB_collections_name_names_entities']
+    NOUNS = config['DB_collections_name_nouns']
 
 
 def resources_path(path):

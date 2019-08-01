@@ -5,13 +5,17 @@ stock_dict = ["stock market", "stock exchange", "Amex", "Dow Jones", "NASDAQ", "
               "company", "business", "trade", "boom", "rise", "bull market", "bear market", "fall", "slump",
               "market trend", "crash", "bunkruptcy", "S&P 5000", "SP500", "common stock", "share", "shares", "dividend",
               "stock", "market"]
-businnes_dict = ["business ", "competition", "damages", "enterprise", "finance", "gross", "tax", "invoice", "net",
+businnes_dict = ["business", "competition", "damages", "enterprise", "finance", "gross", "tax", "invoice", "net",
                  "profit", "supply", "demand", "trade", "profit", "lose", "money", "client", "gross", "black market",
                  "inflation"]
+petroleum_dict = ["petroleum", "petroleum industry", "gas", "barrel", "barrels", "oil", "liquid gas", "Middle East", "energy",
+                 "midstream", "peak oil", "global warming", "OPEC", "Organization of the Petroleum Exporting Countries",
+                  "fuel", "diesel", "car", "electric", "black gold","mine"]
 
 TECH_NAME = 'Tech'
 STOCK_NAME = 'STOCK'
 BUSINNES_NAME = 'BISS'
+PETROLEUM_NAME = 'PETR'
 
 amazon_dict = ["AMZN", "Amazon", "Amazon.com", "e-commerce", "Jeff Bezos", "Alexa", "Joyo.com", "SoundUnwound",
                "IMDb", "E-commerce", "Digital distribution", "Consumer electronics", "AWS", "Cloud computing",
@@ -25,6 +29,9 @@ goldman_dict = ["GS	", "Goldman Sachs Group", "goldman", "bank", "David M. Solom
 morgan_dict = ["JPM", "J.P. Morgan", "J.P. Morgan Chase & Co.", "bank", "Bank of the Manhattan Company", "Jamie Dimon", "Morgan",
                 "JPMorgan", "Bank One", "banking", "investing", "Bear Stearns", "Washington Mutual", "JPM Coin",
                 "Chase Field", "Jennifer Piepszak", "commodities", "wealth management", "Big Four banks"]
+andarko_dict = ["APC", "Andarko", "R. A. Walker", "Kerr McGee", "oil", "barrels", "Allison Tower",
+                "petroleum industry", "petroleum", "Robert G. Gwin", "Walker", "Gwin", "natural gas", "Delaware Basin",
+                "Cline Shale", "Denver Basin", "petroleum corporation", "Woodlands Land Company", "Texas"]
 
 AMAZON_NAME = 'AMZN'
 ADOBE_NAME = 'ADBE'

@@ -1,2 +1,1 @@
-from .vectorize import vectorize
-from .vectorize import get_all_words
+from .vectorize import vectorize, get_all_words

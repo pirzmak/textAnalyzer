@@ -19,4 +19,4 @@ def get_price_trend(before, actual, after):
 
 
 def no_change(value, different):
-    return different/value < NO_CHANGE_VALUE
+    return abs(different/value) < NO_CHANGE_VALUE

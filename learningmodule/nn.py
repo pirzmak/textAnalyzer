@@ -12,7 +12,7 @@ from random import shuffle
 def preprocesssing_data(type, sign, tags, all):
     inputs, outputs = [], []
 
-    for x in select(type, {'$or': tags}):
+    for x in select(type, {'tag': {'$in': tags}}):
         prices = get_price(sign, x['date'])
         if not math.isnan(prices['actual']):
             inputs.append(vectorize(x['text_vector'], all))
@@ -32,9 +32,8 @@ def preprocesssing_data(type, sign, tags, all):
 
 
 def learn(type, sign, tags, divide=0.8):
-    all = get_all_words(select(type, {'$or': tags}))
+    all = get_all_words(select(type, {'tag': {'$in': tags}}))
     inputs, outputs = preprocesssing_data(type, sign, tags, all)
-
     to = int(len(inputs) * divide)
     x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
     y_train, y_test = outputs[0:to], outputs[to: len(outputs)]
@@ -58,4 +57,4 @@ def learn(type, sign, tags, divide=0.8):
     cls = model(x_test)
 
     for i, j in zip(cls, y_test):
-        print(np.argmax(i.numpy()), j)
+        print(i.numpy(), j)

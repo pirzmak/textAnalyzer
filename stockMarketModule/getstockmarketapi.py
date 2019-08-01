@@ -1,8 +1,8 @@
 from iexfinance.stocks import get_historical_intraday
-from dateutil import parser
 import pandas as pd
 import math
 import config
+from dateutil import parser
 from .mysessiondate import *
 
 myCache = {}
