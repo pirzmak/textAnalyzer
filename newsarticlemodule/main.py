@@ -1,8 +1,8 @@
-from newsArticleModule.getarticleapi import get_data_from_news_api
-from newsArticleModule.model import ArticleApiResponse
-from newsArticleModule.textanalizer import get_count_bags_of_word
-from newsArticleModule.textanalizer import get_count_nouns_phrases
-from newsArticleModule.textanalizer import get_count_named_entity
+from newsarticlemodule.getarticleapi import get_data_from_news_api
+from newsarticlemodule.model import ArticleApiResponse
+from newsarticlemodule.textanalizer import get_count_bags_of_word
+from newsarticlemodule.textanalizer import get_count_nouns_phrases
+from newsarticlemodule.textanalizer import get_count_named_entity
 from dataBase.model import Record
 from dataBase.mango_db import insert_many
 import config

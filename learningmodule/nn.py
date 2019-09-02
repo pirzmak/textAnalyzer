@@ -1,12 +1,13 @@
 from vectorize import vectorize
 from vectorize import get_all_words
 from pricetrend import get_price_trend
-from stockMarketModule import get_price
+from stockmarketmodule import get_price
 from dataBase.mango_db import select
 import math
 import numpy as np
 import tensorflow as tf
 from random import shuffle
+import pickle
 
 
 def preprocesssing_data(type, sign, tags, all):
@@ -31,9 +32,26 @@ def preprocesssing_data(type, sign, tags, all):
     return inputs, outputs
 
 
-def learn(type, sign, tags, divide=0.8):
+def save_data_to_file(type, sign, tags):
     all = get_all_words(select(type, {'tag': {'$in': tags}}))
     inputs, outputs = preprocesssing_data(type, sign, tags, all)
+
+    with open("resources/data/inputs_" + sign + ".txt", "wb") as fp:
+        pickle.dump(inputs, fp)
+
+    with open("resources/data/outputs_" + sign + ".txt", "wb") as fp:
+        pickle.dump(outputs, fp)
+
+
+def learn(type, sign, tags, divide=0.8):
+    all = get_all_words(select(type, {'tag': {'$in': tags}}))
+
+    with open("resources/data/inputs_" + sign + ".txt", "rb") as fp:
+        inputs = pickle.load(fp)
+
+    with open("resources/data/outputs_" + sign + ".txt", "rb") as fp:
+        outputs = pickle.load(fp)
+
     to = int(len(inputs) * divide)
     x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
     y_train, y_test = outputs[0:to], outputs[to: len(outputs)]

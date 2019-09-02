@@ -9,12 +9,11 @@ def get_market_prices(name: str, date):
 
     return data.to_csv(config.resources_path(name + "/" + str(date.date()) + '.csv'))
 
-
-# get_market_prices(config.AMAZON_NAME, datetime(2019, 7, 22))
-# get_market_prices(config.ADOBE_NAME, datetime(2019, 7, 22))
-# get_market_prices(config.GOLDMAN_NAME, datetime(2019, 7, 22))
-# get_market_prices(config.MORGAN_NAME, datetime(2019, 7, 22))
-# get_market_prices(config.ANDARKO_NAME, datetime(2019, 7, 22))
-get_market_prices(config.EOG_NAME, datetime(2019, 7, 22))
-get_market_prices(config.MMM_NAME, datetime(2019, 7, 22))
-get_market_prices(config.BOEING_NAME, datetime(2019, 7, 22))
+# get_market_prices(config.AMAZON_NAME, datetime(2019, 8, 26))
+# get_market_prices(config.ADOBE_NAME, datetime(2019, 8, 26))
+# get_market_prices(config.GOLDMAN_NAME, datetime(2019, 8, 26))
+# get_market_prices(config.MORGAN_NAME, datetime(2019, 8, 26))
+# get_market_prices(config.ANDARKO_NAME, datetime(2019, 8, 26))
+# get_market_prices(config.EOG_NAME, datetime(2019, 8, 26))
+get_market_prices(config.MMM_NAME, datetime(2019, 8, 26))
+get_market_prices(config.BOEING_NAME, datetime(2019, 8, 26))

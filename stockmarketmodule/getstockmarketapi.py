@@ -32,7 +32,7 @@ def get_stock_prices(name: str, date: datetime):
 
 
 def get_market_prices(name: str, date: str):
-    data = pd.read_csv('resources/' + name + "/" + date + ".csv")
+    data = pd.read_csv('resources/stockprices/' + name + "/" + date + ".csv")
 
     to_ret = list()
     for index, row in data.iterrows():

@@ -16,6 +16,18 @@ class TRENDS:
     INCREASE = 3
     BIG_INCREASE = 4
 
+    def get_trends(value):
+        if value == TRENDS.BIG_DECREASE:
+            return TRENDS.BIG_DECREASE
+        if value == TRENDS.DECREASE:
+            return TRENDS.DECREASE
+        if value == TRENDS.NO_CHANGE:
+            return TRENDS.NO_CHANGE
+        if value == TRENDS.INCREASE:
+            return TRENDS.INCREASE
+        if value == TRENDS.BIG_INCREASE:
+            return TRENDS.BIG_INCREASE
+
 
 class DBNAMES:
     BAGS_OF_WORDS = config['DB_collections_name_bags_of_words']
