@@ -8,6 +8,7 @@ import numpy as np
 import tensorflow as tf
 from random import shuffle
 import pickle
+from sklearn.preprocessing import normalize
 
 
 def preprocesssing_data(type, sign, tags, all):
@@ -16,18 +17,8 @@ def preprocesssing_data(type, sign, tags, all):
     for x in select(type, {'tag': {'$in': tags}}):
         prices = get_price(sign, x['date'])
         if not math.isnan(prices['actual']):
-            inputs.append(vectorize(x['text_vector'], all))
+            inputs.append({"data": vectorize(x['text_vector'], all), "date": x['date']})
             outputs.append(get_price_trend(prices['before'], prices['actual'], prices['after']))
-
-    li = list(zip(inputs, outputs))
-
-    shuffle(li)
-
-    inputs, outputs = zip(*li)
-    inputs, outputs = np.asarray(inputs), np.asarray(outputs)
-
-    for x in inputs:
-        x /= np.max(x, axis=0)
 
     return inputs, outputs
 
@@ -36,21 +27,41 @@ def save_data_to_file(type, sign, tags):
     all = get_all_words(select(type, {'tag': {'$in': tags}}))
     inputs, outputs = preprocesssing_data(type, sign, tags, all)
 
-    with open("resources/data/inputs_" + sign + ".txt", "wb") as fp:
+    with open("resources/data/inputs_" + type + "_" + sign + ".txt", "wb") as fp:
         pickle.dump(inputs, fp)
 
-    with open("resources/data/outputs_" + sign + ".txt", "wb") as fp:
+    with open("resources/data/outputs_" + type + "_" + sign + ".txt", "wb") as fp:
         pickle.dump(outputs, fp)
+
+    with open("resources/data/all_" + type + "_" + sign + ".txt", "wb") as fp:
+        pickle.dump(all, fp)
+
+
+
+def normalize_data(inputs):
+    ret = []
+    for x in np.asarray(inputs):
+        ret.append(normalize(x[:, np.newaxis], axis=0).ravel())
+
+    return ret
 
 
 def learn(type, sign, tags, divide=0.8):
-    all = get_all_words(select(type, {'tag': {'$in': tags}}))
+    with open("resources/data/all_" + type + "_" + sign + ".txt", "rb") as fp:
+        all = pickle.load(fp)
 
-    with open("resources/data/inputs_" + sign + ".txt", "rb") as fp:
-        inputs = pickle.load(fp)
+    with open("resources/data/inputs_" + type + "_" + sign + ".txt", "rb") as fp:
+        inputs = [el["data"] for el in pickle.load(fp)]
 
-    with open("resources/data/outputs_" + sign + ".txt", "rb") as fp:
+    with open("resources/data/outputs_" + type + "_" + sign + ".txt", "rb") as fp:
         outputs = pickle.load(fp)
+
+    li = list(zip(inputs, outputs))
+
+    shuffle(li)
+
+    inputs, outputs = zip(*li)
+    inputs, outputs = np.asarray(normalize_data(inputs)), np.asarray(outputs)
 
     to = int(len(inputs) * divide)
     x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
@@ -73,6 +84,8 @@ def learn(type, sign, tags, divide=0.8):
 
     model.evaluate(x_test, y_test)
     cls = model(x_test)
+
+    model.save('resources/model/' + type + "_" + sign + ".h5")
 
     for i, j in zip(cls, y_test):
         print(i.numpy(), j)
