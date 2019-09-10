@@ -14,6 +14,3 @@ def get_market_prices(name: str, date):
 # get_market_prices(config.GOLDMAN_NAME, datetime(2019, 8, 26))
 # get_market_prices(config.MORGAN_NAME, datetime(2019, 8, 26))
 # get_market_prices(config.ANDARKO_NAME, datetime(2019, 8, 26))
-# get_market_prices(config.EOG_NAME, datetime(2019, 8, 26))
-get_market_prices(config.MMM_NAME, datetime(2019, 8, 26))
-get_market_prices(config.BOEING_NAME, datetime(2019, 8, 26))
