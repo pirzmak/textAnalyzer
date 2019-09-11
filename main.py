@@ -1,22 +1,39 @@
-from newsarticlemodule.main import get_all_articles_from_dict
-from dataBase.mango_db import insert_many, how_many_records, select, select_by_tag, select_all, clear
-from simulator.simulator import simulate_single_article
-from stockmarketmodule.getstockmarketapi import get_stock_after_before_actual_price
-import config
-from config import DBNAMES
-from datetime import datetime
-from learningmodule import learn, save_data_to_file, normalize_data
+from simulator.simulator import simulate
 import pickle
-import numpy as np
 
-# learn(DBNAMES.BAGS_OF_WORDS, config.AMAZON_NAME, [config.AMAZON_NAME, config.STOCK_NAME])
-
+inputs = []
 
 with open("resources/data/inputs_bags_of_words_AMZN.txt", "rb") as fp:
-    inputs = pickle.load(fp)
+    new_in = pickle.load(fp)
+    for e in new_in:
+        e['sign'] = 'AMZN'
+    inputs = inputs + new_in
 
-input_data = normalize_data([el["data"] for el in inputs])
-input_date = [el["date"] for el in inputs]
+# with open("resources/data/inputs_bags_of_words_ADBE.txt", "rb") as fp:
+#     new_in = pickle.load(fp)
+#     for e in new_in:
+#         e['sign'] = 'ADBE'
+#     inputs = inputs + new_in
+#
+#
+# with open("resources/data/inputs_bags_of_words_APC.txt", "rb") as fp:
+#     new_in = pickle.load(fp)
+#     for e in new_in:
+#         e['sign'] = 'APC'
+#     inputs = inputs + new_in
+#
+# with open("resources/data/inputs_bags_of_words_GS.txt", "rb") as fp:
+#     new_in = pickle.load(fp)
+#     for e in new_in:
+#         e['sign'] = 'GS'
+#     inputs = inputs + new_in
+#
+#
+# with open("resources/data/inputs_bags_of_words_JPM.txt", "rb") as fp:
+#     new_in = pickle.load(fp)
+#     for e in new_in:
+#         e['sign'] = 'JPM'
+#     inputs = inputs + new_in
 
-for x,y in zip(input_data,input_date):
-    simulate_single_article(x, y, "AMZN")
+
+simulate(inputs[:500])

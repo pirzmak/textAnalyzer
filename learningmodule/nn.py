@@ -9,16 +9,20 @@ import tensorflow as tf
 from random import shuffle
 import pickle
 from sklearn.preprocessing import normalize
+import pymongo
 
 
 def preprocesssing_data(type, sign, tags, all):
     inputs, outputs = [], []
 
     for x in select(type, {'tag': {'$in': tags}}):
-        prices = get_price(sign, x['date'])
-        if not math.isnan(prices['actual']):
-            inputs.append({"data": vectorize(x['text_vector'], all), "date": x['date']})
-            outputs.append(get_price_trend(prices['before'], prices['actual'], prices['after']))
+        try:
+            prices = get_price(sign, x['date'])
+            if not math.isnan(prices['actual']):
+                inputs.append({"data": vectorize(x['text_vector'], all), "date": x['date']})
+                outputs.append(get_price_trend(prices['before'], prices['actual'], prices['after']))
+        except pymongo.errors.CursorNotFound:
+            print("cursor error")
 
     return inputs, outputs
 
@@ -37,16 +41,15 @@ def save_data_to_file(type, sign, tags):
         pickle.dump(all, fp)
 
 
-
 def normalize_data(inputs):
     ret = []
     for x in np.asarray(inputs):
-        ret.append(normalize(x[:, np.newaxis], axis=0).ravel())
+        ret.append(normalize(np.array(x)[:, np.newaxis], axis=0).ravel())
 
     return ret
 
 
-def learn(type, sign, tags, divide=0.8):
+def learn(type, sign, divide=0.8):
     with open("resources/data/all_" + type + "_" + sign + ".txt", "rb") as fp:
         all = pickle.load(fp)
 

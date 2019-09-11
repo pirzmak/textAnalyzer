@@ -14,7 +14,7 @@ def get_stock_prices(name: str, date: datetime):
     date = to_next_day_session_if_needed(date)
     monday = date - timedelta(days=date.weekday())
 
-    key = str(datetime(date.year, date.month, date.day, date.hour, date.minute, 0))
+    key = name + "_" + str(datetime(date.year, date.month, date.day, date.hour, date.minute, 0))
 
     if len(myCache) == CACHE_SIZE:
         myCache.clear()
@@ -25,7 +25,7 @@ def get_stock_prices(name: str, date: datetime):
         try:
             prices = get_market_prices(name, str(monday.date()))
             for i in prices:
-                myCache[i[0]] = i[1]
+                myCache[name + "_" + i[0]] = i[1]
             return myCache[key]
         except:
             return float('nan')
