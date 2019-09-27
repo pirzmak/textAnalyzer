@@ -18,6 +18,7 @@ def preprocesssing_data(type, sign, tags, all):
     for x in select(type, {'tag': {'$in': tags}}):
         try:
             prices = get_price(sign, x['date'])
+            print(prices)
             if not math.isnan(prices['actual']):
                 inputs.append({"data": vectorize(x['text_vector'], all), "date": x['date']})
                 outputs.append(get_price_trend(prices['before'], prices['actual'], prices['after']))

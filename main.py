@@ -3,12 +3,12 @@ import pickle
 
 inputs = []
 
-with open("resources/data/inputs_bags_of_words_AMZN.txt", "rb") as fp:
-    new_in = pickle.load(fp)
-    for e in new_in:
-        e['sign'] = 'AMZN'
-    inputs = inputs + new_in
-
+# with open("resources/data/inputs_bags_of_words_AMZN.txt", "rb") as fp:
+#     new_in = pickle.load(fp)
+#     for e in new_in:
+#         e['sign'] = 'AMZN'
+#     inputs = inputs + new_in
+#
 # with open("resources/data/inputs_bags_of_words_ADBE.txt", "rb") as fp:
 #     new_in = pickle.load(fp)
 #     for e in new_in:
@@ -34,6 +34,6 @@ with open("resources/data/inputs_bags_of_words_AMZN.txt", "rb") as fp:
 #     for e in new_in:
 #         e['sign'] = 'JPM'
 #     inputs = inputs + new_in
+#
+# simulate(inputs)
 
-
-simulate(inputs[:500])
