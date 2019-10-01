@@ -28,15 +28,31 @@ def preprocesssing_data(type, sign, tags, all):
     return inputs, outputs
 
 
-def save_data_to_file(type, sign, tags):
+def save_data_to_file(type, sign, tags, divide=0.8):
     all = get_all_words(select(type, {'tag': {'$in': tags}}))
     inputs, outputs = preprocesssing_data(type, sign, tags, all)
 
-    with open("resources/data/inputs_" + type + "_" + sign + ".txt", "wb") as fp:
-        pickle.dump(inputs, fp)
+    li = list(zip(inputs, outputs))
 
-    with open("resources/data/outputs_" + type + "_" + sign + ".txt", "wb") as fp:
-        pickle.dump(outputs, fp)
+    shuffle(li)
+
+    inputs, outputs = zip(*li)
+
+    to = int(len(inputs) * divide)
+    x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
+    y_train, y_test = outputs[0:to], outputs[to: len(outputs)]
+
+    with open("resources/data/x_train_" + type + "_" + sign + ".txt", "wb") as fp:
+        pickle.dump(x_train, fp)
+
+    with open("resources/data/x_test_" + type + "_" + sign + ".txt", "wb") as fp:
+        pickle.dump(x_test, fp)
+
+    with open("resources/data/y_train_" + type + "_" + sign + ".txt", "wb") as fp:
+        pickle.dump(y_train, fp)
+
+    with open("resources/data/y_test_" + type + "_" + sign + ".txt", "wb") as fp:
+        pickle.dump(y_test, fp)
 
     with open("resources/data/all_" + type + "_" + sign + ".txt", "wb") as fp:
         pickle.dump(all, fp)
@@ -50,26 +66,24 @@ def normalize_data(inputs):
     return ret
 
 
-def learn(type, sign, divide=0.8):
+def learn(type, sign):
     with open("resources/data/all_" + type + "_" + sign + ".txt", "rb") as fp:
         all = pickle.load(fp)
 
-    with open("resources/data/inputs_" + type + "_" + sign + ".txt", "rb") as fp:
-        inputs = [el["data"] for el in pickle.load(fp)]
+    with open("resources/data/x_train_" + type + "_" + sign + ".txt", "rb") as fp:
+        x_train = [el["data"] for el in pickle.load(fp)]
 
-    with open("resources/data/outputs_" + type + "_" + sign + ".txt", "rb") as fp:
-        outputs = pickle.load(fp)
+    with open("resources/data/x_test_" + type + "_" + sign + ".txt", "rb") as fp:
+        x_test = [el["data"] for el in pickle.load(fp)]
 
-    li = list(zip(inputs, outputs))
+    with open("resources/data/y_train_" + type + "_" + sign + ".txt", "rb") as fp:
+        y_train = pickle.load(fp)
 
-    shuffle(li)
+    with open("resources/data/y_test_" + type + "_" + sign + ".txt", "rb") as fp:
+        y_test = pickle.load(fp)
 
-    inputs, outputs = zip(*li)
-    inputs, outputs = np.asarray(normalize_data(inputs)), np.asarray(outputs)
-
-    to = int(len(inputs) * divide)
-    x_train, x_test = inputs[0:to], inputs[to: len(inputs)]
-    y_train, y_test = outputs[0:to], outputs[to: len(outputs)]
+    x_train, x_test = np.asarray(normalize_data(x_train)), np.asarray(normalize_data(x_test))
+    y_train, y_test = np.asarray(y_train), np.asarray(y_test)
 
     model = tf.keras.models.Sequential([
       tf.keras.layers.Flatten(input_shape=(len(all), )),
@@ -83,8 +97,6 @@ def learn(type, sign, divide=0.8):
                   metrics=['accuracy'])
 
     model.fit(x_train, y_train, epochs=1)
-
-    res = []
 
     model.evaluate(x_test, y_test)
     cls = model(x_test)

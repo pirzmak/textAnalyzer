@@ -140,6 +140,6 @@ def simulate(inputs):
         print(test)
         history.append(test)
 
-    with open("resources/history.txt", "wb") as fp:
+    with open("resources/results_model.model", "wb") as fp:
         pickle.dump(history, fp)
 
