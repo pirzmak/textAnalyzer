@@ -1,7 +1,6 @@
 import pickle
 
 from config import *
-from datetime import datetime
 from plots import make_models_plot, make_plot_value_price, make_plot_trend_price
 
 
@@ -24,25 +23,25 @@ with open("resources/results_model.model", "rb") as fp:
     history = pickle.load(fp)
 
 model_y = list(map(lambda x: get_money_value(x), history))
-#
-# make_models_plot(model_x, no_model_y, model_y, "resources/plots/model_and_no_model")
-#
-# amzn_value = list(map(lambda x: x['actions'].get(AMAZON_NAME, 0), history))
-# amzn_price = list(map(lambda x: x['prices'][AMAZON_NAME], history))
-# adobe_value = list(map(lambda x: x['actions'].get(ADOBE_NAME, 0), history))
-# adobe_price = list(map(lambda x: x['prices'][ADOBE_NAME], history))
-# gs_value = list(map(lambda x: x['actions'].get(GOLDMAN_NAME, 0), history))
-# gs_price = list(map(lambda x: x['prices'][GOLDMAN_NAME], history))
-# jpm_value = list(map(lambda x: x['actions'].get(MORGAN_NAME, 0), history))
-# jpm_price = list(map(lambda x: x['prices'][MORGAN_NAME], history))
-# apc_value = list(map(lambda x: x['actions'].get(ANDARKO_NAME, 0), history))
-# apc_price = list(map(lambda x: x['prices'][ANDARKO_NAME], history))
-#
-# make_plot_value_price(model_x, amzn_value, amzn_price, "resources/plots/" + AMAZON_NAME)
-# make_plot_value_price(model_x, adobe_value, adobe_price, "resources/plots/" + ADOBE_NAME)
-# make_plot_value_price(model_x, gs_value, gs_price, "resources/plots/" + GOLDMAN_NAME)
-# make_plot_value_price(model_x, jpm_value, jpm_price, "resources/plots/" + MORGAN_NAME)
-# make_plot_value_price(model_x, apc_value, apc_price, "resources/plots/" + ANDARKO_NAME)
+
+make_models_plot(model_x, no_model_y, model_y, "resources/plots/model_and_no_model")
+
+amzn_value = list(map(lambda x: x['actions'].get(AMAZON_NAME, 0), history))
+amzn_price = list(map(lambda x: x['prices'][AMAZON_NAME], history))
+adobe_value = list(map(lambda x: x['actions'].get(ADOBE_NAME, 0), history))
+adobe_price = list(map(lambda x: x['prices'][ADOBE_NAME], history))
+gs_value = list(map(lambda x: x['actions'].get(GOLDMAN_NAME, 0), history))
+gs_price = list(map(lambda x: x['prices'][GOLDMAN_NAME], history))
+jpm_value = list(map(lambda x: x['actions'].get(MORGAN_NAME, 0), history))
+jpm_price = list(map(lambda x: x['prices'][MORGAN_NAME], history))
+apc_value = list(map(lambda x: x['actions'].get(ANDARKO_NAME, 0), history))
+apc_price = list(map(lambda x: x['prices'][ANDARKO_NAME], history))
+
+make_plot_value_price(model_x, amzn_value, amzn_price, "resources/plots/" + AMAZON_NAME)
+make_plot_value_price(model_x, adobe_value, adobe_price, "resources/plots/" + ADOBE_NAME)
+make_plot_value_price(model_x, gs_value, gs_price, "resources/plots/" + GOLDMAN_NAME)
+make_plot_value_price(model_x, jpm_value, jpm_price, "resources/plots/" + MORGAN_NAME)
+make_plot_value_price(model_x, apc_value, apc_price, "resources/plots/" + ANDARKO_NAME)
 
 a = {}
 

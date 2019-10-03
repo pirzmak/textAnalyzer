@@ -24,12 +24,12 @@ def select_all(column: str):
 
 def select_by_tag(column: str, tag: str):
     mycol = mydb[column]
-    return mycol.find({'tag': tag})
+    return mycol.find({'tag': tag}, no_cursor_timeout=True)
 
 
 def select(column: str, query):
     mycol = mydb[column]
-    return mycol.find(query)
+    return mycol.find(query, no_cursor_timeout=True)
 
 
 def update(column: str, query, value):
