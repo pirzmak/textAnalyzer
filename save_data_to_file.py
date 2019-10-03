@@ -3,7 +3,7 @@ from config import DBNAMES
 from learningmodule import save_data_to_file
 
 
-save_data_to_file(DBNAMES.NAMES_ENTITIES, config.AMAZON_NAME,
+save_data_to_file(DBNAMES.NOUNS, config.AMAZON_NAME,
                   [config.AMAZON_NAME, config.TECH_NAME, config.STOCK_NAME])
 print(config.AMAZON_NAME)
 # save_data_to_file(DBNAMES.NAMES_ENTITIES, config.ADOBE_NAME,

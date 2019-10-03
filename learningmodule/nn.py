@@ -21,7 +21,7 @@ def preprocesssing_data(type, sign, tags, all):
             prices = get_price(sign, x['date'])
             print(prices)
             if not math.isnan(prices['actual']):
-                if type == DBNAMES.BAGS_OF_WORDS:
+                if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
                     inputs.append({"data": vectorize(x['text_vector'], all), "date": x['date']})
                 if type == DBNAMES.NAMES_ENTITIES:
                     inputs.append({"data": vectorize_named_entities(x['text_vector'], all), "date": x['date']})
@@ -45,10 +45,11 @@ def get_names_entities_vector(data):
 
 
 def save_data_to_file(type, sign, tags, divide=0.8):
-    if type == DBNAMES.BAGS_OF_WORDS:
-        all = get_all_words(select(type, {'tag': {'$in': tags}}))
+    query = select(type, {'tag': {'$in': tags}})
+    if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
+        all = get_all_words(query)
     if type == DBNAMES.NAMES_ENTITIES:
-        all = get_all_named_entities(select(type, {'tag': {'$in': tags}}))
+        all = get_all_named_entities(query)
 
     inputs, outputs = preprocesssing_data(type, sign, tags, all)
 
@@ -126,7 +127,7 @@ def learn(type, sign):
     shape = 0
 
 
-    if type == DBNAMES.BAGS_OF_WORDS:
+    if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
         normalized_x_train = normalize_data(x_train)
         normalized_x_test = normalize_data(x_test)
         shape = (len(all), )
@@ -137,8 +138,7 @@ def learn(type, sign):
         shape = get_names_entities_shape(x_train)
 
     model = tf.keras.models.Sequential([
-      tf.keras.layers.Input(shape=(18, 6834)),
-      tf.keras.layers.Flatten(),
+      tf.keras.layers.Flatten(input_shape=shape),
       tf.keras.layers.Dense(128, activation='relu'),
       tf.keras.layers.Dropout(0.2),
       tf.keras.layers.Dense(5, activation='softmax')

@@ -4,8 +4,10 @@ import math
 from learningmodule import normalize_data
 from stockmarketmodule import get_price
 import tensorflow as tf
+import numpy as np
 import pickle
 import copy
+from config import DBNAMES
 
 
 class Wallet:
@@ -14,7 +16,7 @@ class Wallet:
         self.money = money
 
 
-amzn_model = tf.keras.models.load_model('./resources/model/bags_of_words_AMZN.h5')
+amzn_model = tf.keras.models.load_model('./resources/model/nouns_AMZN.h5')
 adbe_model = tf.keras.models.load_model('./resources/model/bags_of_words_ADBE.h5')
 apc_model = tf.keras.models.load_model('./resources/model/bags_of_words_APC.h5')
 gs_model = tf.keras.models.load_model('./resources/model/bags_of_words_GS.h5')
@@ -116,10 +118,14 @@ def simulate_single_article(article_vector, article_date, name: str, wallet: Wal
     return wallet, prices, trend
 
 
-def simulate(inputs):
+def simulate(inputs, name, type):
     sorted_list = sorted(inputs, key=lambda k: k['date'])
 
-    input_data = normalize_data([el["data"] for el in sorted_list])
+    if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
+        input_data = normalize_data([el["data"] for el in sorted_list])
+    if type == DBNAMES.NAMES_ENTITIES:
+        input_data = list(map(lambda x: np.asarray(normalize_data(x)), [el["data"] for el in sorted_list]))
+
     input_date = [el["date"] for el in sorted_list]
     input_sign = [el["sign"] for el in sorted_list]
 
@@ -137,9 +143,8 @@ def simulate(inputs):
             'actions': copy.copy(wallet.actions),
             'prices': copy.copy(prices)
         }
-        print(test)
         history.append(test)
 
-    with open("resources/results_model.model", "wb") as fp:
+    with open("resources/results" + name + "_" + type + ".model", "wb") as fp:
         pickle.dump(history, fp)
 
