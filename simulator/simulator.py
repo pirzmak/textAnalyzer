@@ -17,10 +17,10 @@ class Wallet:
 
 
 amzn_model = tf.keras.models.load_model('./resources/model/nouns_AMZN.h5')
-adbe_model = tf.keras.models.load_model('./resources/model/bags_of_words_ADBE.h5')
-apc_model = tf.keras.models.load_model('./resources/model/bags_of_words_APC.h5')
-gs_model = tf.keras.models.load_model('./resources/model/bags_of_words_GS.h5')
-jpm_model = tf.keras.models.load_model('./resources/model/bags_of_words_JPM.h5')
+adbe_model = tf.keras.models.load_model('./resources/model/nouns_ADBE.h5')
+apc_model = tf.keras.models.load_model('./resources/model/nouns_APC.h5')
+gs_model = tf.keras.models.load_model('./resources/model/nouns_GS.h5')
+jpm_model = tf.keras.models.load_model('./resources/model/nouns_JPM.h5')
 
 last_prices = {}
 
@@ -96,8 +96,14 @@ def sell(stat, name, prices, wallet: Wallet):
     return wallet
 
 
-def simulate_single_article(article_vector, article_date, name: str, wallet: Wallet):
-    article_vector = article_vector.reshape((1, len(article_vector)))
+def simulate_single_article(article_vector, article_date, name: str, wallet: Wallet, type):
+    if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
+        shape = (1, len(article_vector))
+    if type == DBNAMES.NAMES_ENTITIES:
+        max_len = len(article_vector[0])
+        shape = (1, 18, max_len)
+
+    article_vector = article_vector.reshape(shape)
 
     model = get_model(name)
 
@@ -134,7 +140,7 @@ def simulate(inputs, name, type):
     wallet = Wallet({}, 100000)
 
     for article_vector, article_date, sign in zip(input_data, input_date, input_sign):
-        wallet, prices, trend = simulate_single_article(article_vector, article_date, sign, wallet)
+        wallet, prices, trend = simulate_single_article(article_vector, article_date, sign, wallet, type)
         test = {
             'date': article_date,
             'trend': trend,
@@ -145,6 +151,6 @@ def simulate(inputs, name, type):
         }
         history.append(test)
 
-    with open("resources/results" + name + "_" + type + ".model", "wb") as fp:
+    with open("resources/results_" + name + "_" + type + ".model", "wb") as fp:
         pickle.dump(history, fp)
 

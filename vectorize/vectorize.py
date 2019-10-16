@@ -39,7 +39,7 @@ def get_all_words(data):
     for k, v in all.items():
         if v > 5:
             filtered_all[k] = len(filtered_all)
-    return filtered_all
+    return all, filtered_all
 
 
 def get_all_named_entities(data):
@@ -61,5 +61,5 @@ def get_all_named_entities(data):
         for q, w in v.items():
             if w > 5:
                 filtered_all[k][q] = len(filtered_all[k])
-    return filtered_all
+    return all, filtered_all
 

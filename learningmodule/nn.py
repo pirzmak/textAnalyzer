@@ -126,7 +126,6 @@ def learn(type, sign):
     normalized_x_train, normalized_x_test = [], []
     shape = 0
 
-
     if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
         normalized_x_train = normalize_data(x_train)
         normalized_x_test = normalize_data(x_test)
@@ -174,5 +173,10 @@ def learn(type, sign):
 
     model.save('resources/model/' + type + "_" + sign + ".h5")
 
-    for i, j in zip(cls, y_test):
-        print(i.numpy(), j)
+    toSave = []
+
+    for i in cls:
+        toSave.append(i.numpy())
+
+    np.savetxt('resources/metrics/' + type + "_" + sign + "_results.csv", np.asarray(toSave), delimiter=",")
+    np.savetxt('resources/metrics/' + type + "_" + sign + "_data.csv", np.asarray(y_test), delimiter=",")

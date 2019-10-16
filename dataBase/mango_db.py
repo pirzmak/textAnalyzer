@@ -40,7 +40,6 @@ def update(column: str, query, value):
 def how_many_records(name: str):
     print(mydb[name].count())
 
-
 def clear(name: str):
     mycol = mydb[name]
     mycol.remove()
