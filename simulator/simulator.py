@@ -8,6 +8,8 @@ import numpy as np
 import pickle
 import copy
 from config import DBNAMES
+import gc
+import random
 
 
 class Wallet:
@@ -16,23 +18,20 @@ class Wallet:
         self.money = money
 
 
-amzn_model = tf.keras.models.load_model('./resources/model/nouns_AMZN.h5')
-adbe_model = tf.keras.models.load_model('./resources/model/nouns_ADBE.h5')
-apc_model = tf.keras.models.load_model('./resources/model/nouns_APC.h5')
-gs_model = tf.keras.models.load_model('./resources/model/nouns_GS.h5')
-jpm_model = tf.keras.models.load_model('./resources/model/nouns_JPM.h5')
+# amzn_model = tf.keras.models.load_model('./resources/model/names_entities/AMZN/one_4096_relu.h5')
+# adbe_model = tf.keras.models.load_model('./resources/model/names_entities/ADBE/one_4096_relu.h5')
+# gs_model = tf.keras.models.load_model('./resources/model/names_entities/GS/one_4096_relu.h5')
+# jpm_model = tf.keras.models.load_model('./resources/model/names_entities/JPM/one_4096_relu.h5')
 
 last_prices = {}
 
 def get_model(sign):
-    if sign == "AMZN":
-        return amzn_model
-    if sign == "ADBE":
-        return adbe_model
-    if sign == "APC":
-        return apc_model
-    if sign == "GS":
-        return gs_model
+    # if sign == "AMZN":
+    #     return amzn_model
+    # if sign == "ADBE":
+    #     return adbe_model
+    # if sign == "GS":
+    #     return gs_model
     if sign == "JPM":
         return jpm_model
 
@@ -40,7 +39,6 @@ def get_model(sign):
 def get_prices(date):
     set_one_price("AMZN", date)
     set_one_price("ADBE", date)
-    set_one_price("APC", date)
     set_one_price("GS", date)
     set_one_price("JPM", date)
 
@@ -124,13 +122,29 @@ def simulate_single_article(article_vector, article_date, name: str, wallet: Wal
     return wallet, prices, trend
 
 
+def simulate_single_article2(trend, article_date, name: str, wallet: Wallet):
+    prices = get_prices(article_date)
+    trend = random.randint(0, 4)
+    if prices[name] and prices[name] > 0:
+        if trend == TRENDS.BIG_DECREASE and name in wallet.actions:
+            sell(1, name, prices, wallet)
+        if trend == TRENDS.DECREASE and name in wallet.actions:
+            sell(0.5, name, prices, wallet)
+        if trend == TRENDS.INCREASE:
+            buy(0.05, name, prices, wallet)
+        if trend == TRENDS.BIG_INCREASE:
+            buy(0.2, name, prices, wallet)
+
+    return wallet, prices, trend
+
+
 def simulate(inputs, name, type):
     sorted_list = sorted(inputs, key=lambda k: k['date'])
 
     if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
         input_data = normalize_data([el["data"] for el in sorted_list])
     if type == DBNAMES.NAMES_ENTITIES:
-        input_data = list(map(lambda x: np.asarray(normalize_data(x)), [el["data"] for el in sorted_list]))
+        input_data = list(map(lambda x: np.asarray(normalize_data(x)), [el["data"] for el in sorted_list if el["sign"] == "JPM"]))
 
     input_date = [el["date"] for el in sorted_list]
     input_sign = [el["sign"] for el in sorted_list]
@@ -144,7 +158,72 @@ def simulate(inputs, name, type):
         test = {
             'date': article_date,
             'trend': trend,
-            'trend_name': sign,
+            'trend_name': sign
+        }
+        history.append(test)
+
+    with open("resources/" + name, "wb") as fp:
+        pickle.dump(history, fp)
+
+def simulate2(inputs, name, type):
+    # sorted_list = sorted(inputs, key=lambda k: k['date'])
+    #
+    # if type == DBNAMES.BAGS_OF_WORDS or type == DBNAMES.NOUNS:
+    #     input_data = normalize_data([el["data"] for el in sorted_list])
+    # if type == DBNAMES.NAMES_ENTITIES:
+    #     input_data = list(map(lambda x: np.asarray(normalize_data(x)), [el["data"] for el in sorted_list]))
+    #
+    # input_date = [el["date"] for el in sorted_list]
+    # input_sign = [el["sign"] for el in sorted_list]
+
+    history = []
+
+    wallet = Wallet({}, 100000)
+    #
+    # with open("resources/test.data", "wb") as fp:
+    #     pickle.dump(zip(input_data, input_date, input_sign), fp)
+
+    inputs = []
+
+    with open("resources/adbe_trends", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/amzn_trends", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/gs_trends", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/jpm_trends", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+
+    with open("resources/adbe_trends2", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/amzn_trends2", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/gs_trends2", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/jpm_trends2", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+
+    with open("resources/adbe_trends3", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/amzn_trends3", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/gs_trends3", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+    with open("resources/jpm_trends3", "rb") as fp:
+        inputs = inputs + pickle.load(fp)
+
+    inputs = sorted(inputs, key=lambda k: k['date'])
+
+    print((len(inputs)))
+    i = 0
+    for el in inputs:
+        print(i)
+        i=i+1
+        wallet, prices, trend = simulate_single_article2(el["trend"], el["date"], el["trend_name"], wallet)
+        test = {
+            'date': el["date"],
+            'trend': trend,
+            'trend_name': el["trend_name"],
             'money': wallet.money,
             'actions': copy.copy(wallet.actions),
             'prices': copy.copy(prices)
@@ -153,4 +232,3 @@ def simulate(inputs, name, type):
 
     with open("resources/results_" + name + "_" + type + ".model", "wb") as fp:
         pickle.dump(history, fp)
-

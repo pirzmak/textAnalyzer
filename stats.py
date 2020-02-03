@@ -11,13 +11,11 @@ def get_stats(tag, type):
 
     print(type, tag)
     length = len(all)
-    # print(length)
     suma = sum(all.values())
     print(sorted(all.items(), key=lambda kv: -kv[1])[:20])
     a = list(map(lambda x: x/suma, all.values()))
     a = sorted(a)
     a.reverse()
-    # print(a[:20])
     suma = sum(filtered.values())
     make_plot_histogram(range(len(filtered)), filtered.values(), list(map(lambda x: x/suma, filtered.values())), "resources/plots/nouns/vector-"+ tag)
     print(suma)
@@ -52,7 +50,7 @@ def get_stats_names_entities(tag, type):
     print(sl)
 
 
-get_stats_names_entities(config.TECH_NAME, DBNAMES.NAMES_ENTITIES)
+# get_stats_names_entities(config.TECH_NAME, DBNAMES.NAMES_ENTITIES)
 # get_stats(config.AMAZON_NAME, DBNAMES.BAGS_OF_WORDS)
 # get_stats(config.ANDARKO_NAME, DBNAMES.BAGS_OF_WORDS)
 # get_stats(config.GOLDMAN_NAME, DBNAMES.BAGS_OF_WORDS)
